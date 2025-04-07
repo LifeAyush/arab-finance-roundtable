@@ -99,3 +99,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.custom-class{
+  display: flex;
+  flex-direction: column;
+}
