@@ -1,6 +1,6 @@
 const SPREADSHEET_ID = '1ic4QW6FAz-uMb6V92dR9KOXdKUAabfqIoQVKqhtdgus';
-const API_KEY = 'AIzaSyAlXocHmaZiOF5QBle6RdWnd3IhOoyb7l0'
-const CLIENT_ID = '908508394470-1en9cg7csp91bbgkv7hvqauir87l6ir7.apps.googleusercontent.com'; // Replace with your OAuth client ID
+const API_KEY = 'AIzaSyBbztDPs1dL9SK3uCUG6c3WLBCNdv_Fd08'
+const CLIENT_ID = '26354626760-1cascccphchev3ha37t0qgjiekuhihhi.apps.googleusercontent.com'; // Replace with your OAuth client ID
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
 
 // Initialize the Google API client
