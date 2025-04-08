@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,98 +12,32 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { useForm } from "react-hook-form";
 import logo1 from "@/assets/logo1.png";
 import logo2 from "@/assets/logo2.png";
 
-// Google API type declarations
-declare global {
-  interface Window {
-    gapi: any;
-  }
-}
-
-const gapi = window.gapi;
-
-// Import Google Sheets functions
-import { initClient, handleAuthClick } from './up.js';
-
 const Index = () => {
   const [agreedToDataUse, setAgreedToDataUse] = useState<string | null>(null);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [formHeight, setFormHeight] = useState<number>(0);
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load Google API client when component mounts
   useEffect(() => {
-    // Load the Google API client script
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.onload = () => {
-      // Load the auth2 client
-      const authScript = document.createElement('script');
-      authScript.src = 'https://accounts.google.com/gsi/client';
-      authScript.onload = () => {
-        // Initialize the client
-        if (typeof gapi !== 'undefined') {
-          gapi.load('client:auth2', initClient);
-        }
-      };
-      document.body.appendChild(authScript);
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup scripts on unmount
-      const scripts = document.getElementsByTagName('script');
-      for (let i = scripts.length - 1; i >= 0; i--) {
-        if (scripts[i].src.includes('apis.google.com/js/api.js') || 
-            scripts[i].src.includes('accounts.google.com/gsi/client')) {
-          scripts[i].remove();
+    const handleMessage = (event: MessageEvent) => {
+      // Verify the message is from Google Forms
+      if (event.origin === 'https://docs.google.com') {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'resize' && data.height) {
+            setFormHeight(data.height);
+          }
+        } catch (e) {
+          console.error('Error parsing form message:', e);
         }
       }
     };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
-
-  const onSubmit = (data: any) => {
-    if (agreedToDataUse !== "yes") {
-      toast({
-        title: "Error",
-        description: "You must agree to the data use statement to register.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Format data for Google Sheets
-    const formattedData = [{
-      greeting: data.greeting || '',
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      organization: data.organization,
-      title: data.title || '',
-      timestamp: new Date().toISOString()
-    }];
-
-    // Upload to Google Sheets
-    if (typeof gapi !== 'undefined' && gapi.auth2) {
-      handleAuthClick([formattedData], 'REGISTRATIONS', 'true');
-    } else {
-      toast({
-        title: "Error",
-        description: "Google API client not initialized. Please try again.",
-        variant: "destructive",
-      });
-    }
-
-    toast({
-      title: "Registration Successful",
-      description: "Thank you for registering for the event. You will receive a confirmation email shortly.",
-    });
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -417,103 +351,30 @@ const Index = () => {
               </RadioGroup>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="greeting">Greeting</Label>
-                  <Select onValueChange={(value) => console.log(value)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a greeting" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ms">Ms.</SelectItem>
-                      <SelectItem value="mr">Mr.</SelectItem>
-                      <SelectItem value="dr">Dr.</SelectItem>
-                      <SelectItem value="prefer-not-say">
-                        Prefer not to say
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="firstName">First Name*</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    {...register("firstName", { required: true })}
-                    className={errors.firstName ? "border-red-500" : ""}
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      First name is required
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="lastName">Last Name*</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    {...register("lastName", { required: true })}
-                    className={errors.lastName ? "border-red-500" : ""}
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Last name is required
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="email">Email ID*</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    {...register("email", {
-                      required: true,
-                      pattern: /^\S+@\S+$/i,
-                    })}
-                    className={errors.email ? "border-red-500" : ""}
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Valid email is required
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="organization">Organization*</Label>
-                  <Input
-                    id="organization"
-                    type="text"
-                    {...register("organization", { required: true })}
-                    className={errors.organization ? "border-red-500" : ""}
-                  />
-                  {errors.organization && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Organization is required
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="title">
-                    Title/Designation at the organization
-                  </Label>
-                  <Input id="title" type="text" {...register("title")} />
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-[#004159] hover:bg-[#00546e] text-white"
+            {agreedToDataUse === "yes" ? (
+              <div 
+                ref={formContainerRef}
+                className="mt-6 transition-all duration-300 relative"
+                style={{ 
+                  height: formHeight ? `${formHeight}px` : '800px',
+                  minHeight: '800px'
+                }}
               >
-                Register
-              </Button>
-            </form>
+                <iframe
+                  src="https://docs.google.com/forms/d/e/1FAIpQLSf7s80LPbsc5QaGb6-ml51ZW8xiOo82RuGG4rrvlnEwncrWoA/viewform?embedded=true"
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full absolute inset-0 border-0"
+                  title="Registration Form"
+                >
+                  Loading…
+                </iframe>
+              </div>
+            ) : (
+              <div className="mt-6 text-center text-gray-600">
+                Please agree to the data use statement to access the registration form.
+              </div>
+            )}
           </div>
 
           <div className="mt-6 text-center text-gray-600 text-sm">
