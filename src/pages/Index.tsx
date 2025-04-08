@@ -13,6 +13,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
+import logo1 from "@/assets/logo1.png";
+import logo2 from "@/assets/logo2.png";
 
 // Google API type declarations
 declare global {
@@ -205,12 +207,12 @@ const Index = () => {
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
             <img
-              src="/src/assets/logo1.png"
+              src={logo1}
               alt="Partner Logo 1"
               className="h-16 md:h-20 object-contain"
             />
             <img
-              src="/src/assets/logo2.png"
+              src={logo2}
               alt="Partner Logo 2"
               className="h-16 md:h-20 object-contain"
             />
