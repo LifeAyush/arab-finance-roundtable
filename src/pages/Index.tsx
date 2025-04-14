@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import logo1 from "@/assets/logo1.png";
-import logo2 from "@/assets/logo2.png";
-
+import logo1 from "@/assets/logo1.jpeg";
+import logo2 from "@/assets/logo2.jpeg";
+import logo3 from "@/assets/logo3.png";
+import logo4 from "@/assets/logo4.jpeg";
+import logo5 from "@/assets/logo5.png";
 const Index = () => {
   const [agreedToDataUse, setAgreedToDataUse] = useState<string | null>(null);
   const [formHeight, setFormHeight] = useState<number>(0);
@@ -23,20 +25,20 @@ const Index = () => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // Verify the message is from Google Forms
-      if (event.origin === 'https://docs.google.com') {
+      if (event.origin === "https://docs.google.com") {
         try {
           const data = JSON.parse(event.data);
-          if (data.type === 'resize' && data.height) {
+          if (data.type === "resize" && data.height) {
             setFormHeight(data.height);
           }
         } catch (e) {
-          console.error('Error parsing form message:', e);
+          console.error("Error parsing form message:", e);
         }
       }
     };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
   return (
@@ -44,13 +46,6 @@ const Index = () => {
       {/* Hero Section */}
       <section className="w-full bg-[#004159] text-white py-16">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex justify-center mb-6">
-            <img
-              src="/lovable-uploads/03271f84-58de-497b-8986-cd98efe9e749.png"
-              alt="Event Logo"
-              className="h-20 md:h-24"
-            />
-          </div>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center">
             Arab Regional Finance Roundtable 2025
           </h1>
@@ -134,24 +129,40 @@ const Index = () => {
       </section>
 
       {/* Partners Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 text-center">
-            Our Partners
-          </h2>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+      <section className="pt-12 bg-[#F7F7F7]">
+          <div className="flex flex-col items-center gap-8">
+            {/* First row - 2 logos */}
+            <div className="flex justify-center items-center gap-8 md:gap-12">
+              <img
+                src={logo1}
+                alt="Partner Logo 1"
+                className="h-16 md:h-20 object-contain"
+              />
+              <img
+                src={logo2}
+                alt="Partner Logo 2"
+                className="h-16 md:h-20 object-contain"
+              />
+            </div>
+            {/* Second row - 3 logos */}
+            <div className="flex justify-center items-center gap-8 md:gap-12">
             <img
-              src={logo1}
-              alt="Partner Logo 1"
-              className="h-16 md:h-20 object-contain"
-            />
-            <img
-              src={logo2}
-              alt="Partner Logo 2"
-              className="h-16 md:h-20 object-contain"
-            />
+                src={logo5}
+                alt="Partner Logo 5"
+                className="h-24 md:h-28 object-contain"
+              />
+              <img
+                src={logo3}
+                alt="Partner Logo 3"
+                className="h-16 md:h-36 object-contain"
+              />
+              <img
+                src={logo4}
+                alt="Partner Logo 4"
+                className="h-16 md:h-20 object-contain"
+              />
+            </div>
           </div>
-        </div>
       </section>
 
       {/* Background Section */}
@@ -182,7 +193,7 @@ const Index = () => {
               in the Arab region. Key takeaways from the roundtable will help
               provide input to the Baku-Belem Roadmap and COP30. The roundtable
               is kindly supported by the Global Ethical Finance Initiative
-              (GEFI) and the DIFC.
+              (GEFI), the DIFC and the SLK Capital.
             </p>
             <p className="mb-4 text-left">
               Serving as a precursor to COP30 in Brazil, the roundtable will
@@ -318,15 +329,7 @@ const Index = () => {
             <div className="mb-6">
               <div className="max-w-none text-gray-700 text-left">
                 <p className="mb-4 text-left">
-                  Your personal data, including name, contact details and
-                  administrative information will be collected to facilitate
-                  your participation in the event and to implement
-                  organizational arrangements, and shared among the organizers
-                  and implementation partners namely UN Climate Change High
-                  Level Champions (organizer) and SLK Capital (implementation
-                  partner). Your personal information will be treated as
-                  confidential in accordance with data protection legislation as
-                  well as with the terms of this statement.
+                Your personal data, including name, contact details and administrative information will be collected to facilitate your participation in the event and to implement organizational arrangements, and shared among the organizers. Your personal information will be treated as confidential in accordance with data protection legislation as well as with the terms of this statement.
                 </p>
                 <p className="text-gray-700 font-semibold text-left">
                   Select "Yes" if you authorize the treatment of your personal
@@ -352,12 +355,12 @@ const Index = () => {
             </div>
 
             {agreedToDataUse === "yes" ? (
-              <div 
+              <div
                 ref={formContainerRef}
                 className="mt-6 transition-all duration-300 relative"
-                style={{ 
-                  height: formHeight ? `${formHeight}px` : '800px',
-                  minHeight: '800px'
+                style={{
+                  height: formHeight ? `${formHeight}px` : "800px",
+                  minHeight: "800px",
                 }}
               >
                 <iframe
@@ -372,7 +375,8 @@ const Index = () => {
               </div>
             ) : (
               <div className="mt-6 text-center text-gray-600">
-                Please agree to the data use statement to access the registration form.
+                Please agree to the data use statement to access the
+                registration form.
               </div>
             )}
           </div>
@@ -384,11 +388,11 @@ const Index = () => {
             </p>
             <p>Please reach out with any questions or for more information.</p>
             <p className="mt-4">
-              For any queries kindly reach out to - sara@slkgroupcapital.com
+              For any queries kindly reach out to - sandra@slkgroupcapital.com
             </p>
             <div className="mt-4 flex justify-center">
               <img
-                src="/lovable-uploads/dfb0ecf5-a3b1-4956-88ba-ec4c9f8b9180.png"
+                src={logo4}
                 alt="SLK Capital Logo"
                 className="h-12"
               />
